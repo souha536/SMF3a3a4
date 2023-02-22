@@ -1,0 +1,15 @@
+<table border=1>
+    <tr> <td> Reference </td> <td> Titre </td> <td> Description </td>
+    {% for formation   in formations %} 
+        {% if formation.Description ends with "theorique" %}
+            <tr>
+            <td> {{ formation.ref }} </td>
+            <td>{{ formation.Titre|upper }} </td>
+            <td>{{ formation.Description }} </td>
+            <td> <a href="{{ path('formainfo',{'titre': formation.Titre})}}"> Details Formation</a> </td>
+            </tr>
+        {% endif %}
+    {% else %} pas de formations trouvé 
+    {% endfor %}
+</table>
+    Le nombre de formations est {{formations|length()}}
