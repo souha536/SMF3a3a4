@@ -9,6 +9,8 @@
 <tr> 
 <td> {{classroom.id}}</td>
 <td> <a href="{{ path('showClassroom',{'id': classroom.id})}}"> {{classroom.name}} </a> </td>
+<td> <a href="{{ path('updateClassroom',{'id': classroom.id})}}"> update</a> </td>
+
 <td>  <a href="{{ path('DeleteClassroom',{'id': classroom.id})}}"> Delete </a> </td>
 <tr>
 {% endfor %}

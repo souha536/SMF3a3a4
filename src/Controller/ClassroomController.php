@@ -6,6 +6,7 @@ use App\Entity\Classroom;
 use App\Form\ClassroomType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,16 +59,34 @@ class ClassroomController extends AbstractController
     {
         $classroom= new Classroom;
         $form=$this->createForm(ClassroomType::class, $classroom);
+        $form->add('Ajouter',SubmitType::class);
         $form->handleRequest($request);
  
         if ($form->isSubmitted()) {
-        $em= $doctrine->getManager();
-        $em->persist($classroom);
-        $em->flush();
+            $em= $doctrine->getManager();
+            $em->persist($classroom);
+            $em->flush();
         return $this->redirectToRoute('listClassroom');
         }
         return $this->render('classroom/addClassroom.html.twig', [
             'formClassroom'=> $form->createView(),
+        ]);
+    }
+    #[Route('/updateClassroom/{id}', name: 'updateClassroom')]
+
+    public function updateClassroom(Request $request,ManagerRegistry $doctrine ,Classroom $classroom)
+    {
+        $form = $this->createForm(ClassroomType::class, $classroom);
+        $form->add('Update',SubmitType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            $entityManager = $doctrine->getManager();
+            $entityManager->flush();
+            return $this->redirectToRoute('showClassroom', ['id' => $classroom->getId()]);
+        }
+                return $this->render('classroom/update.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }
