@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Classroom;
 use App\Entity\Student;
+use App\Form\ClassroomType;
+use App\Form\RechercheType;
 use App\Form\StudentType;
+use App\Repository\StudentRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -13,38 +17,78 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StudentController extends AbstractController
 {
-    #[Route('/student', name: 'app_student')]
-    public function index(): Response
+    #[Route('student', name : 'app_student' )]
+public function index() : Response
+{
+    return new Response("Bonjour mes étudiants") ;
+}
+
+    #[Route('/readstudent', name: 'read_student')]
+    public function read(ManagerRegistry $doctrine): Response
     {
-        return $this->render('student/index.html.twig', [
-            'controller_name' => 'StudentController',
-        ]);
+        $students = $doctrine
+            ->getRepository(Student::class)
+            ->findAll();
+        return $this->render('student/read.html.twig',
+            ["students"=>$students]);
     }
-    #[Route('/student/add', name: 'addStudent')]
-    public function addStudent(ManagerRegistry $doctrine, Request $request): Response
-    {
-        $student= new Student;
-        $form=$this->createForm(StudentType::class, $student);
-        $form->add('Ajouter',SubmitType::class);
+
+    #[Route('/addstudent', name: 'add_student')]
+    public function add(Request $request, ManagerRegistry $doctrine): Response
+    { $s= new Student();
+        $form = $this->createForm(StudentType::class, $s);
+        $form->add('ajouter', SubmitType::class) ;
         $form->handleRequest($request);
- 
-        if ($form->isSubmitted()) {
-            $em= $doctrine->getManager();
-            $em->persist($student);
+       // var_dump($s); die;
+        if ($form->isSubmitted())
+        { $em = $doctrine->getManager();
+            $em->persist($s);
             $em->flush();
-        return $this->redirectToRoute('listStudent');
+            return $this->redirectToRoute('read_student');
         }
-        return $this->render('student/addStudent.html.twig', [
-            'form'=> $form->createView(),
-        ]);
+        return $this->renderForm("student/add.html.twig",
+            ["f"=>$form]) ;
+
     }
-        #[Route('/listStudent', name: 'listStudent')]
-        public function Student(ManagerRegistry $doctrine): Response
+
+
+    #[Route('/recherche', name: 'recherche_student')]
+    public function find2(StudentRepository  $repo, Request $request ): Response
+    {
+        $students= $repo->findAll();
+        if($request->isMethod("post"))
         {
-            $repo=$doctrine->getRepository(Student::class);
-            $students=$repo->findAll();
-            return $this->render('student/list.html.twig', [
-                'students' => $students,
-            ]);
+            $nsc=$request->get('nsc');
+            $student = $repo->findOneBynNsc($nsc);
+            return $this->render("student/search2.html.twig",
+                ["student"=>$student]);
+        }
+        return $this->render("student/read.html.twig",
+            ["students"=>$students]);
+    }
+    #[Route('/findstudent', name: 'find_student')]
+    public function find(StudentRepository  $repo): Response
+    {
+        //$student = $repo->findOneBynNsc("zzz");
+        $students= $repo->TriByEmail();
+        return $this->render("student/find.html.twig",["student"=>$students]);
+    }
+
+    #[Route('/finds', name: 'find2_student')]
+    public function search(StudentRepository  $repo, Request $request): Response
+    {$student = New Student() ;
+        $form = $this->createForm(RechercheType::class,$student);
+        $form->handleRequest($request);
+        $students=$repo->findAll() ;
+        if($form->isSubmitted())
+        {
+            $nsc = $form['nsc']->getData();
+           // $nsc1 = $request->get('')
+            $student = $repo->findOneBynNsc($nsc);
+            return $this->renderForm("student/search.html.twig",
+                ["student"=>$student,"form"=>$form]);
+        }
+        return $this->renderForm("student/read.html.twig",
+            ["students"=>$students,"form"=>$form]);
     }
 }

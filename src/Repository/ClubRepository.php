@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Classroom;
+use App\Entity\Club;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Classroom>
+ * @extends ServiceEntityRepository<Club>
  *
- * @method Classroom|null find($id, $lockMode = null, $lockVersion = null)
- * @method Classroom|null findOneBy(array $criteria, array $orderBy = null)
- * @method Classroom[]    findAll()
- * @method Classroom[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Club|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Club|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Club[]    findAll()
+ * @method Club[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ClassroomRepository extends ServiceEntityRepository
+class ClubRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Classroom::class);
+        parent::__construct($registry, Club::class);
     }
 
-    public function add(Classroom $entity, bool $flush = false): void
+    public function add(Club $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ClassroomRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Classroom $entity, bool $flush = false): void
+    public function remove(Club $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ClassroomRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Classroom[] Returns an array of Classroom objects
+//     * @return Club[] Returns an array of Club objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ClassroomRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Classroom
+//    public function findOneBySomeField($value): ?Club
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')
